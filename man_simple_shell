@@ -1,0 +1,28 @@
+.TH SimpleShell 1 "Aout 2021" "SimpleShell Manual"
+
+
+.SH NAME
+shelly \- Simple UNIX shell that handles multiple commands
+
+
+.SH SYNOPSIS
+.B ./cshell
+.I Handles pipes and multiple arguments
+Holberton School Trimester 1 Capstone
+
+The prompt '$ ' will appear on terminal. You enter commands following the prompt. You can handle multiple commands using ';' '&&' '||' specifiers. Once you have entered the commands you execute the commands by pressing 'ENTER' or 'RETURN' on your keyboard.
+
+
+.SH FEATURES
+
+
+
+.SH BUILTINS
+The following are supported by shelly
+.br help
+.br env
+.br exit
+.br cd
+
+.SH "AUTHORS"
+ghassen hedfi and ala benna
