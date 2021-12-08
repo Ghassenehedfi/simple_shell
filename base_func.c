@@ -1,6 +1,7 @@
 #include "simple_shell.h"
 
 /**
+ * Ghassen-Ala
  * _putchar - writes the character c
  * @c: The character to print
  * Return: Always 0 (success)
