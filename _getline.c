@@ -1,7 +1,9 @@
 #include "simple_shell.h"
 /**
+*Ghassen 
 *_getline - read the input
 *Return: The line readed
+*Ala
 */
 char *_getline()
 {
