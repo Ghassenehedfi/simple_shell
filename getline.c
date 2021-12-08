@@ -3,7 +3,7 @@
 * getline - read the input
 * Return: The line readed
 */
-char *getline()
+char *_getline()
 {
 	int i, buffsize = 1024, rd;
 	char c = 0;
