@@ -1,5 +1,6 @@
 #include"simple_shell.h"
 /**
+*Ghassen-Ala 
 *split - divide the buffer to small segment
 *@line: the buffer to divide
 *@div: the character to split with
