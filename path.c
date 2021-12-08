@@ -1,5 +1,6 @@
 #include "simple_shell.h"
 /**
+*Ghassen - Ala  
 *path - cherche for the command location
 *@cmd: the command to treat
 *Return: The absolute path of the command
