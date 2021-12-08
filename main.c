@@ -1,5 +1,6 @@
 #include "simple_shell.h"
 /**
+*Ghassen-Ala 
 *main - tha main function
 *Return: Always 0
 */
