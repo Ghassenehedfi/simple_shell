@@ -1,6 +1,7 @@
 #include "simple_shell.h"
 
 /**
+ * Ghassen - Ala
  * _getenv - function to get enviroment variable by name
  * @name: name of the variable
  * Return: Return a pointer
