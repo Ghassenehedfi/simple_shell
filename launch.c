@@ -1,205 +1,132 @@
 #include "main.h"
 
 /**
-* _getenv  - function that return an env variable
-* @env: the wanted environ variable
-* Return: the environ variable
-*/
-char *_getenv(char *env)
+ * _getenv - function to get enviroment variable by name
+ * @name: name of the variable
+ * Return: Return a pointer
+ */
+char *_getenv(char *name)
 {
-        char **envi_var;
-        size_t i;
-        size_t j;
+	char **env, *c, *_name;
 
-        envi_var = environ;
-        for (i = 0; envi_var[i] != NULL; i++)
-        {
-                for (j = 0; j < strlen(env); j++)
-                {
-                        if (env[j] != envi_var[i][j])
-                        {
-                                break;
-                        }
-                        if (j == strlen(env) - 1)
-                        {
-                                return (envi_var[i] + strlen(env));
-                        }
-                }
-        }
-        return (NULL);
+	env = environ;
+	while (*env != NULL)
+	{
+		for (c = *env, _name = name; *c == *_name; c++, _name++)
+		{
+			if (*c == '=')
+				break;
+		}
+		if ((*c == '=') && (*_name == '\0'))
+			return (c + 1);
+		env++;
+	}
+	return (NULL);
 }
-
 /**
-*launch - executes a program 
-*@args : the command passed by the user
-*Return: 1 if the shell should continue running, 0 if it should terminate
-*/
-int launch(char **args)
+ * _calloc - a function that allocates memory for an array, using malloc.
+ * @size : int
+ * Return: pointer to an array
+ */
+void *_calloc(unsigned int size)
 {
-        pid_t pid;
-        char *PATH = NULL;
-        char **PATH_splitted;
-        char *program_path;
-        int wstatus;
+	char *a;
+	unsigned int i;
 
-        if (access(args[0], X_OK) == 0)
-        {       pid = fork();
-                if (pid ==  0)
-                {
-                        if (execve(args[0], args, NULL) == -1)
-                        {
-                                perror("no excution");
-                                exit(EXIT_FAILURE);
-                        }
-                }
-                waitpid(pid, &wstatus, 0);
-                if (WIFEXITED(wstatus))
-                {
-                        return (127);
-                }
-                return(0);
+	if (size == 0)
+	return (NULL);
+	a = malloc(size);
+	if (a == NULL)
+	return (NULL);
+	for (i = 0; i < size; i++)
+	{
+		a[i] = '\0';
+	}
+	return (a);
 }
-        else
-        {
-        PATH = getenv("PATH");
-        PATH_splitted = split_input(PATH, ":");
-        program_path = add_command(args[0], PATH_splitted);
-                if (access(program_path, X_OK) == 0)
-                {
-                        pid = fork();
-                                if (pid == 0)
-                                        {
-                                                if (execve(program_path, args, NULL) == -1)
-                                                        {
-                                                                perror("no excution");
-                                                                exit(EXIT_FAILURE);
-                                                        }
-                                        }
-                        waitpid(pid, &wstatus, 0);
-                        if (WIFEXITED(wstatus))
-                                {
-                                        return (127);
-                                }
-                }
-                else
-                {
-                        perror("does not work, Retry");
-                        free_array(PATH_splitted);
-                        return (127);
-                }
-        return (0);
-        }
-
-}
-
-
 /**
-* split_input - splits string into array of string
-* @line: string being passed by user
-* @delim: to separeate the str by.
-* Return:       array that hold the strings splitted
-*                       this splits based on sent delimiters
-*/
-char **split_input(char *line, char *delim)
+ * _itoa - turns integer to str
+ * @num : int
+ * @str : string
+ * Return: str
+ */
+char *_itoa(int num, char *str)
 {
-        int i;
-        char **words_array;
-        char *word;
-        char *duplicated;
-        int buffsize = 1024;
+	int i = 0, r;
+	int isNegative = 0;
 
-        duplicated = strdup(line);
-        words_array = malloc(sizeof(char *) * buffsize);
-        if (words_array == NULL)
-        {
-                perror("Malloc error\n");
-                free_array(words_array);
-                exit(98);
-        }
-        word = strtok(duplicated, delim);
-        for (i = 0; word != NULL; i++)
-{
-                words_array[i] = strdup(word);
-                word = strtok(NULL, delim);
-        }
-        words_array[i] = NULL;
-        free(duplicated);
-        return (words_array);
+	if (num == 0)
+	{
+		str[i++] = '0';
+		str[i] = '\0';
+		return (str);
+	}
+
+	if (num < 0)
+	{
+	isNegative = 1;
+		num = -num;
+	}
+
+	while (num != 0)
+	{
+		r = num % 10;
+		str[i++] = (r > 9) ? (r - 10) + 'a' : r + '0';
+		num = num / 10;
+	}
+
+	if (isNegative == 1)
+		str[i++] = '-';
+	str[i] = '\0';
+	rev_string(str);
+	return (str);
 }
-
-
-
 /**
- * add_command - check if program exists
- * @command: input taken from user.
- * @PATH_splitted: PATH env variable splitted by ':'.
- * Return: the result if the program exists or NULL
-*/
-
-char *add_command(char *command, char **PATH_splitted)
+ *rev_string - reverse string
+ *@s : string
+ *Return: 0
+ */
+void rev_string(char *s)
 {
-        char *final_cmd = NULL;
-        int i = 0;
-        int exists_program = 0;
-        struct stat st;
+	char h;
+	int i, j;
+	int c = 0;
 
-        while (PATH_splitted[i] != NULL)
-        {
-                final_cmd = gen(PATH_splitted[i], command);
-                i++;
-                exists_program = stat(final_cmd, &st);
-                if (exists_program == 0)
-                {
-                        free_array(PATH_splitted);
-                        return (final_cmd);
-                }
-                else
-                {
-                        free(final_cmd);
-                }
-        }
-        return (NULL);
+	for (i = 0; s[i] != '\0'; i++)
+	{
+		c++;
+	}
+	for (j = 0 ; j < c / 2 ; j++)
+	{
+		h = s[c - j - 1];
+		s[c - j - 1] = s[j];
+		s[j] = h;
+	}
 }
-
 /**
- * gen - concatenate every directory with command
- * @directory: directory from PATH
- * @command: user command.
- * Return: directory + command
-*/
-char *gen(char *directory, char *command)
+ * _atoi - convert into integer
+ * @s : string
+ * Return: 0
+ */
+int _atoi(char *s)
 {
-        int i = 0;
-        int j = 0;
-        int command_len = 0;
-        int directory_len = 0;
-        int total_len = 0;
-        char *final_cmd = NULL;
+	int i, sign = 1, num = 0, res;
 
-        command_len = strlen(command);
-        directory_len = strlen(directory);
-        total_len = directory_len + command_len + 2;
-final_cmd = malloc(sizeof(char) * total_len);
-        if (final_cmd == NULL)
-        {
-                perror("Malloc error\n");
-                free(final_cmd);
-                exit(98);
-        }
-        while (j < total_len)
-        {
-                for (i = 0; i <= directory_len && directory[i] != '\0'; i++)
-                {
-                        final_cmd[i] = directory[i];
-                        j++;
-                }
-                final_cmd[j] = '/';
-                j++;
-                for (i = 0; i <= command_len; i++)
-                {
-                        final_cmd[j] = command[i];
-                        j++;
-                }
-        }
-        return (final_cmd);
+	for (i = 0; s[i] != '\0';)
+	{
+		if (s[i] == '-')
+		{
+			sign = sign * (-1);
+			i++;
+		}
+		else if ((s[i] >= '0') && (s[i] <= '9'))
+		{
+			num = num * 10 + (s[i] - '0');
+			i++;
+		}
+		else
+			i++;
+	}
+	res = (sign * num);
+	return (res);
 }
