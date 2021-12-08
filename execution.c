@@ -1,42 +1,35 @@
 #include "main.h"
 /**
- * execute - execute builtins
- * @args: command entered
- * Return: the executing of one of the builtins
- */
-
-int execute(char **args)
+*_exec - execute the command
+*@cmd: the command
+*@array: array holdin the argments
+*Return: Return 0 in success
+*/
+int _exec(char *cmd, char **array)
 {
-        int i;
+	pid_t pid;
+	int status;
 
-        int (*builtin_func[])(char **) = {
-                &cd,
-                &help,
-                &exit,
-                &env,
-                &history
-};
+	if (cmd == NULL || array == NULL)
+		return (-1);
 
-char *builtin_str[] = {
-        "cd",
-        "help",
-        "exit",
-        "env",
-        "history"
-};
-
-
-        if (args[0] == NULL)
-{
-        return (1);
-}
-        for (i = 0; i <= 4; i++)
-{
-        if (strcmp(args[0], builtin_str[i]) == 0)
-        {
-                return ((*builtin_func[i])(args));
-        }
-
-}
-        return (launch(args));
+	pid = fork();
+	if (pid < 0)
+	{
+		perror("fail to fork");
+		return (-1);
+	}
+	else if (pid == 0)
+	{
+		if (execve(cmd, array, environ) != 0)
+		{
+			perror("fail to execute");
+			return (-1);
+		}
+	}
+	else
+	{
+		waitpid(pid, &status, WUNTRACED);
+	}
+	return (1);
 }
